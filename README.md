@@ -1,4 +1,4 @@
-Role Name
+Ansible Role: Docker
 =========
 
 Ansible role for installing Docker and docker-compose
