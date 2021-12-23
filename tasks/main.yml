@@ -1,0 +1,60 @@
+---
+- name: Docker - Check if docker is installed
+  command: systemctl status docker
+  register: docker_check
+  ignore_errors: yes
+- name: Docker- Install
+  block:
+    - name: Docker - Download the installer
+      get_url:
+        url: https://get.docker.com/
+        dest: "{{ docker_installer_path }}"
+        mode: 0700
+    - name: Docker - Install from the installer
+      shell: /tmp/install_docker.sh
+    - name: Docker - Remove the installer file
+      file:
+        state: absent
+        path: "{{ docker_installer_path }}"
+  when: docker_check.stderr.find('service could not be found') != -1
+- name: Docker - Enable the daemon in systemd
+  systemd:
+    name: docker
+    enabled: yes
+    masked: no
+- name: Docker - Start the daemon
+  systemd:
+    name: docker
+    state: started
+    masked: no
+- name: Docker Compose - Check if docker-compose is installed
+  command: docker-compose --version
+  register: docker_compose_check
+  ignore_errors: yes
+- name: Docker Compose - Install
+  block: 
+    - name: Docker Compose - Download and install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.28.2/docker-compose-Linux-{{ ansible_userspace_architecture }}
+        dest: /usr/bin/docker-compose
+        mode: 0755
+    - name: Systemd - Restart Docker daemon
+      systemd:
+        name: docker
+        state: restarted
+  when:
+    - docker_compose_check.msg is defined
+    - docker_compose_check.msg.find('No such file or directory') != -1
+- name: Pip dependencies
+  block:
+    - name: Pip - Upgrade pip
+      pip:
+        name: pip
+        state: latest
+    - name: Pip - Install Docker 
+      pip:
+        name: docker
+        state: latest
+    - name: Pip - Install docker-compose
+      pip:
+        name: docker-compose
