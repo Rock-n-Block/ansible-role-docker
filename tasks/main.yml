@@ -45,16 +45,20 @@
   when:
     - docker_compose_check.msg is defined
     - docker_compose_check.msg.find('No such file or directory') != -1
-- name: Pip dependencies
-  block:
-    - name: Pip - Upgrade pip
-      pip:
-        name: pip
-        state: latest
-    - name: Pip - Install Docker 
-      pip:
-        name: docker
-        state: latest
-    - name: Pip - Install docker-compose
-      pip:
-        name: docker-compose
+# - name: Pip dependencies
+#   block:
+#     - name: Pip - Install
+#       package: 
+#         name: pip 
+#         state: present
+#     - name: Pip - Upgrade pip
+#       pip:
+#         name: pip
+#         state: latest
+#     - name: Pip - Install Docker 
+#       pip:
+#         name: docker
+#         state: latest
+#     - name: Pip - Install docker-compose
+#       pip:
+#         name: docker-compose
