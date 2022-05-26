@@ -27,24 +27,24 @@
     name: docker
     state: started
     masked: no
-- name: Docker Compose - Check if docker-compose is installed
-  command: docker-compose --version
-  register: docker_compose_check
-  ignore_errors: yes
-- name: Docker Compose - Install
-  block: 
-    - name: Docker Compose - Download and install Docker Compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/1.28.2/docker-compose-Linux-{{ ansible_userspace_architecture }}
-        dest: /usr/bin/docker-compose
-        mode: 0755
-    - name: Systemd - Restart Docker daemon
-      systemd:
-        name: docker
-        state: restarted
-  when:
-    - docker_compose_check.msg is defined
-    - docker_compose_check.msg.find('No such file or directory') != -1
+# - name: Docker Compose - Check if docker-compose is installed
+#   command: docker-compose --version
+#   register: docker_compose_check
+#   ignore_errors: yes
+# - name: Docker Compose - Install
+#   block: 
+#     - name: Docker Compose - Download and install Docker Compose
+#       get_url:
+#         url: https://github.com/docker/compose/releases/download/1.28.2/docker-compose-Linux-{{ ansible_userspace_architecture }}
+#         dest: /usr/bin/docker-compose
+#         mode: 0755
+#     - name: Systemd - Restart Docker daemon
+#       systemd:
+#         name: docker
+#         state: restarted
+#   when:
+#     - docker_compose_check.msg is defined
+#     - docker_compose_check.msg.find('No such file or directory') != -1
 # - name: Pip dependencies
 #   block:
 #     - name: Pip - Install
